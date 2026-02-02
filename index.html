@@ -422,25 +422,23 @@
     }
 
     function sendToBackend(name, email, data) {
-      // Przygotuj dane do wysłania
-      var formData = {
-        name: name,
-        email: email,
-        timestamp: new Date().toISOString(),
-        grossCost: data.grossRGCost.toFixed(2),
-        profit: data.profitPerRG.toFixed(2),
-        profitability: data.profitability.toFixed(2),
-        baseCost: data.baseRGCost.toFixed(2),
-        tax: data.taxPerRG.toFixed(2),
-        health: data.healthInsurancePerRG.toFixed(2),
-        vat: data.vatValue.toFixed(2)
-      };
+      // Przygotuj dane jako FormData (omija CORS preflight)
+      var formData = new FormData();
+      formData.append('name', name);
+      formData.append('email', email);
+      formData.append('timestamp', new Date().toISOString());
+      formData.append('grossCost', data.grossRGCost.toFixed(2));
+      formData.append('profit', data.profitPerRG.toFixed(2));
+      formData.append('profitability', data.profitability.toFixed(2));
+      formData.append('baseCost', data.baseRGCost.toFixed(2));
+      formData.append('tax', data.taxPerRG.toFixed(2));
+      formData.append('health', data.healthInsurancePerRG.toFixed(2));
+      formData.append('vat', data.vatValue.toFixed(2));
       
       // Wyślij do Google Apps Script
       fetch(WEBHOOK_URL, {
         method: 'POST',
-        mode: 'no-cors',
-        body: JSON.stringify(formData)
+        body: formData
       })
       .then(response => {
         console.log('✅ Dane wysłane do backendu');
